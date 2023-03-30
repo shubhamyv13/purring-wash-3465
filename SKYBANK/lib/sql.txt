@@ -1,0 +1,44 @@
+1) Creation of the user table
+
+mysql> CREATE TABLE user(
+    -> id INT PRIMARY KEY AUTO_INCREMENT,
+    -> fname VARCHAR(20) NOT NULL,
+    -> lname VARCHAR(20) NOT NULL,
+    -> mobile VARCHAR(10) UNIQUE NOT NULL,
+    -> email VARCHAR(30) UNIQUE NOT NULL,
+    -> dateOfBirth DATE,
+    -> address VARCHAR(20) NOT NULL,
+    -> securityQuestion VARCHAR(30) NOT NULL,
+    -> registrationDate DATE,
+    -> username VARCHAR(25) UNIQUE NOT NULL,
+    -> password VARCHAR(25) NOT NULL,
+    -> customerId VARCHAR(20) UNIQUE NOT NULL,
+    -> profilePassword VARCHAR(25) NOT NULL,
+    -> is_delete TINYINT(1) DEFAULT 0
+    -> );
+    
+
+2) Creation of the account table
+
+mysql>  CREATE TABLE account(
+    -> id INT PRIMARY KEY AUTO_INCREMENT,
+    -> accountNumber VARCHAR(15) UNIQUE NOT NULL,
+    -> availableBalance VARCHAR(20) NOT NULL,
+    -> is_upi TINYINT(1) DEFAULT 0,
+    -> aadhar VARCHAR(20) UNIQUE NOT NULL,
+    -> pan VARCHAR(20) UNIQUE NOT NULL,
+    -> accountType VARCHAR(20) NOT NULL,
+    -> is_delete TINYINT(1) DEFAULT 0,
+    -> customer_Id INT NOT NULL,
+    -> CONSTRAINT fk_user_account FOREIGN KEY(customer_Id) REFERENCES user(id));
+    
+    
+ 3) Creation of the transaction table
+ 
+ mysql> CREATE TABLE transaction(
+    -> id INT PRIMARY KEY AUTO_INCREMENT,
+    -> deposit VARCHAR(20) NOT NULL,
+    -> withdraw VARCHAR(20) NOT NULL,
+    -> timeOfTransaction TIMESTAMP,
+    -> account_Id INT NOT NULL,
+    -> CONSTRAINT fk_trans_account FOREIGN KEY(account_Id) REFERENCES account(id));
