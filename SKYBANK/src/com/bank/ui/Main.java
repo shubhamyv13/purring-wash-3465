@@ -1,10 +1,12 @@
 package com.bank.ui;
-
 import java.util.Scanner;
 
 import com.bank.consoleColors.ConsoleColors;
 
 public class Main {
+	
+	private static UserUI userUI;
+	private static AccountUI accountUI;
 	
 	
 	
@@ -273,16 +275,16 @@ public class Main {
 			choice = sc.nextInt();
 			switch(choice) {
 			   case 1:
-				   //displaymyAccountAndProfile(sc);
+				   userUI.viewProfile();
 				   break;
 			   case 2:
-				   //paymentsAndTransfer(sc);
+				   userUI.updateProfile();
 				   break;
 			   case 3:
-				   //fixedDeposit(sc);
+				   accountUI.accountSummary();
 				   break;
 			   case 4:
-				   //eservices(sc);
+				   accountUI.eStatement();
 				   break;
 			   case 5:
 				   //logout(sc);
@@ -319,8 +321,8 @@ public class Main {
 	}
 	
 	public static void existingCustomer(Scanner sc) {
-//		if(!userUi.login())
-//		   return;
+		if(!userUI.login())
+		   return;
 		
 		int choice = 0;
 		do {
@@ -385,7 +387,9 @@ public class Main {
 				   existingCustomer(sc);
 				   break;
 			   case 2:
-				   //existingCustomer(sc);
+				   int result = userUI.addUser();
+				   //the below function will run even if above does not complete due to some errors
+				   if(result==0) displayAfterRegistrationMenu(sc);
 				   break;
 			   default:
 				   System.out.println("Invalid Selection, try again");
@@ -394,9 +398,44 @@ public class Main {
 		
 		sc.close();
 	}
+	public static void displayAfterRegistrationMenu(Scanner sc) {
+		int choice = 0;
+			System.out.println(ConsoleColors.GREEN_BOLD+"*** Please choose Option to create one of the following accounts to use our services ***"+ConsoleColors.RESET);
+			System.out.println();
+			System.out.println(ConsoleColors.BLUE_BOLD
+					+"+============================================+"+"\n"
+					+"|                  SKY BANK                  |"+"\n"
+					+"+============================================+"+"\n"
+					+"|                                            |"+"\n"
+					+"|  1. Saving Account                         |"+"\n"
+					+"|  2. Fixed Deposit Account                  |"+"\n"
+					+"|  0. Exit                                   |"+"\n"
+					+"|                                            |"+"\n"
+					+"+============================================+"+"\n"
+					+ConsoleColors.RESET);
+			
+			System.out.println();
+			choice = sc.nextInt();
+			switch(choice) {
+			   case 0:
+				   System.out.println("Thank you, Visit again");
+				   break;
+			   case 1:
+				   accountUI.addAccountSaving();
+				   break;
+			   case 2:
+				   //userUI.addUser();
+				   break;
+			   default:
+				   System.out.println("Invalid Selection, try again");
+			}
+	}
+	
 
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
+		userUI = new UserUI(sc);
+		accountUI = new AccountUI(sc);
 		int choice = 0;
 		
 		do {
@@ -421,7 +460,7 @@ public class Main {
 				   System.out.println("Thank you, Visit again");
 				   break;
 			   case 1:
-				   //accountantLogin(sc);
+				   displayAfterRegistrationMenu(sc);
 				   break;
 			   case 2:
 				   customerPortal(sc);
