@@ -7,13 +7,51 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.bank.dto.User;
 import com.bank.dto.UserImpl;
 import com.bank.exception.NoRecordFoundException;
 import com.bank.exception.SomethingWentWrongException;
 
 public class UserDAOImpl implements UserDAO {
+	
+	public static int getCustomerId(String customerNumber) throws SomethingWentWrongException,NoRecordFoundException{
+		Connection connection = null;
+		int checkResult = 0;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			
+			String SELECT_QUEry = "SELECT id FROM user WHERE customerId = ?";
+			
+			//prepare the query
+			PreparedStatement pr = connection.prepareStatement(SELECT_QUEry);
+			
+			pr.setString(1, customerNumber);
+			
+			//execute query
+			ResultSet resultSet = pr.executeQuery();
+			if(DBUtils.isResultSetEmpty(resultSet)) {
+				throw new NoRecordFoundException("No such customer Id found");
+			}
+			
+			//Data extraction from the result set
+			resultSet.next();
+			checkResult = resultSet.getInt(1);
+		}catch(SQLException sqlEx) {
+			sqlEx.printStackTrace();
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception 
+				DBUtils.closeConnection(connection);
+			}catch(SQLException sqlEx) {
+				throw new SomethingWentWrongException();
+			}
+		}
+		
+		return checkResult;
+	}
 
 	@Override
 	public void addUser(User user) throws SomethingWentWrongException {
@@ -120,7 +158,7 @@ public class UserDAOImpl implements UserDAO {
 			//connect to database
 			connection = DBUtils.connectToDatabase();
 			//prepare the query
-			String LOGIN_QUERY = "SELECT id FROM user WHERE username= ? AND password = ?";
+			String LOGIN_QUERY = "SELECT id FROM user WHERE username= ? AND password = ? AND is_delete = ?";
 			
 			//get the prepared statement object
 			PreparedStatement ps = connection.prepareStatement(LOGIN_QUERY);
@@ -128,6 +166,7 @@ public class UserDAOImpl implements UserDAO {
 			//stuff the data in the query
 			ps.setString(1, username);
 			ps.setString(2, password);
+			ps.setInt(3, 0);
 			
 			//execute query
 			ResultSet resultSet = ps.executeQuery();
@@ -193,7 +232,113 @@ public class UserDAOImpl implements UserDAO {
 				throw new SomethingWentWrongException();
 			}
 		}
+	}
+	
+	private boolean isOldPasswordCorrect(String oldPassword) throws SomethingWentWrongException{
+		Connection connection = null;
+		boolean isPasswordValid = false;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String CHECK_PASSSWORD_QUERY = "SELECT count(*) as count FROM user WHERE  password = ? AND id = ?";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(CHECK_PASSSWORD_QUERY);
+			
+			//stuff the data in the query
+			ps.setString(1, oldPassword);
+			ps.setInt(2, LoggedINUser.loggedInUserId);
+			
+			//execute query
+			ResultSet resultSet = ps.executeQuery();
+			resultSet.next();
+			
+			isPasswordValid = resultSet.getInt("count") == 1;
+		}catch(SQLException sqlEx) {
+			sqlEx.printStackTrace();
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);
+			}catch(SQLException sqlEx) {
+				throw new SomethingWentWrongException();
+			}
+		}
+		return isPasswordValid;
+	}
+	
+	@Override
+	public void changePassword(String oldPassword, String newPassword)throws SomethingWentWrongException, NoRecordFoundException{
+		if(!isOldPasswordCorrect(oldPassword)) {
+			throw new NoRecordFoundException("Invalid old passowrd!");
+		}
 		
+		//you are here means old password matched
+		Connection connection = null;
+		
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String UPDATE_QUERY = "UPDATE user SET password = ? WHERE id = ?";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
+			
+			//stuff the data in the query
+			ps.setString(1, newPassword);
+			ps.setInt(2, LoggedINUser.loggedInUserId);
+			
+			//execute query
+			ps.executeUpdate();
+		}catch(SQLException sqlEx) {
+			sqlEx.printStackTrace();
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				throw new SomethingWentWrongException();
+			}
+		}
+	}
+
+	@Override
+	public void deleteUser() throws SomethingWentWrongException, NoRecordFoundException {
+		Connection connection = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+						
+			//prepare the query
+			String UPDATE_QUERY = "UPDATE user SET is_delete = ? WHERE id = ?";
+				
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
+				
+			//stuff the data in the query
+			ps.setInt(1, 1);
+			ps.setInt(2, LoggedINUser.loggedInUserId);
+				
+			//execute query
+			ps.executeUpdate();	
+		}catch(SQLException sqlEx) {
+			sqlEx.printStackTrace();
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception 
+				DBUtils.closeConnection(connection);
+			}catch(SQLException sqlEx) {
+				throw new SomethingWentWrongException();
+			}
+		}
 	}
 
 }

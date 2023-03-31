@@ -8,11 +8,12 @@ public class AccountImpl implements Account{
 	private String customerId;
 	private String accountNumber;
 	private String accountType;
+	private int duration = 0;
 	
 	public AccountImpl() {}
 	
 	public AccountImpl(String aadhar, String pan, String balance, String customerId, String accountNumber,
-			String accountType) {
+			String accountType, int duration) {
 		super();
 		this.aadhar = aadhar;
 		this.pan = pan;
@@ -20,6 +21,7 @@ public class AccountImpl implements Account{
 		this.customerId = customerId;
 		this.accountNumber = accountNumber;
 		this.accountType = accountType;
+		this.duration = duration;
 	}
 
 	public String getAadhar() {
@@ -68,6 +70,14 @@ public class AccountImpl implements Account{
 
 	public void setAccountType(String accountType) {
 		this.accountType = accountType;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
 	}
 
 	@Override

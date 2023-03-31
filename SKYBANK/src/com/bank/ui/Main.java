@@ -7,6 +7,7 @@ public class Main {
 	
 	private static UserUI userUI;
 	private static AccountUI accountUI;
+	private static BeneficiaryUI beneficiaryUI;
 	
 	
 	
@@ -164,7 +165,7 @@ public class Main {
 			choice = sc.nextInt();
 			switch(choice) {
 			   case 1:
-				   //displaymyAccountAndProfile(sc);
+				   accountUI.addAccountFD();
 				   break;
 			   case 2:
 				   //paymentsAndTransfer(sc);
@@ -217,7 +218,7 @@ public class Main {
 			choice = sc.nextInt();
 			switch(choice) {
 			   case 1:
-				   //displaymyAccountAndProfile(sc);
+				   //accountUI.addAccountFD();
 				   break;
 			   case 2:
 				   //paymentsAndTransfer(sc);
@@ -253,20 +254,22 @@ public class Main {
 		System.out.println(ConsoleColors.GREEN_BOLD+"*** Please choose Option ***"+ConsoleColors.RESET);
 		System.out.println();
 		System.out.println(ConsoleColors.BLUE_BOLD
-				+"+============================================+"+"\n"
-				+"|  My Account & Profile                      |"+"\n"
-				+"+============================================+"+"\n"
-				+"|                                            |"+"\n"
-				+"|  1. View Profile                           |"+"\n"
-				+"|  2. Update Profile                         |"+"\n"
-				+"|  3. Account Summary                        |"+"\n"
-				+"|  4. Register for e-statement               |"+"\n"
-				+"|  5. Transaction History                    |"+"\n"
-				+"|  6. Change Password                        |"+"\n"
-				+"|  7. Add & Manage Beneficiary               |"+"\n"
-				+"|  8. Exit                                   |"+"\n"
-				+"|                                            |"+"\n"
-				+"+============================================+"+"\n"
+				+"+=============================================+"+"\n"
+				+"|  My Account & Profile                       |"+"\n"
+				+"+=============================================+"+"\n"
+				+"|                                             |"+"\n"
+				+"|  1.  View Profile                           |"+"\n"
+				+"|  2.  Update Profile                         |"+"\n"
+				+"|  3.  Account Summary                        |"+"\n"
+				+"|  4.  Register for e-statement               |"+"\n"
+				+"|  5.  Transaction History                    |"+"\n"
+				+"|  6.  Change Password                        |"+"\n"
+				+"|  7.  Add Beneficiary                        |"+"\n"
+				+"|  8.  Delete Beneficiary (particular account)|"+"\n"
+				+"|  9.  View Beneficiary (particular account)  |"+"\n"
+				+"|  10. Exit                                   |"+"\n"
+				+"|                                             |"+"\n"
+				+"+=============================================+"+"\n"
 				+ConsoleColors.RESET);
 		
 		System.out.println();
@@ -289,7 +292,19 @@ public class Main {
 			   case 5:
 				   //logout(sc);
 				   break;
+			   case 6:
+				   userUI.changePassword();
+				   break;
+			   case 7:
+				   beneficiaryUI.addBeneficiary();
+				   break;	
 			   case 8:
+				   beneficiaryUI.deleteBeneficiary();
+				   break;	 
+			   case 9:
+				   beneficiaryUI.viewBeneficiary();
+				   break;	   
+			   case 10:
 				   return;
 			   default:
 				   System.out.println("Invalid selection, try again.");
@@ -342,13 +357,20 @@ public class Main {
 				   displayEServices(sc);
 				   break;
 			   case 5:
-				   //logout(sc);
+				   accountUI.closeAccount();
 				   break;
 			   case 6:
-				   //logout(sc);
-				   break;
+				   userUI.deleteUser();
+				   try{
+						Thread.sleep(2000);
+						userUI.logout();
+						customerPortal(sc);
+					}catch(InterruptedException ex) {
+						
+					}
+					//no break statement here i.e. after deletion of user account, logout will also take place
 			   case 7:
-				   //logout(sc);
+				   userUI.logout();
 				   break;	   
 			   case 8:
 				   return;
@@ -422,6 +444,8 @@ public class Main {
 				   break;
 			   case 1:
 				   accountUI.addAccountSaving();
+				   userUI.logout();
+				   customerPortal(sc);
 				   break;
 			   case 2:
 				   //userUI.addUser();
@@ -436,6 +460,7 @@ public class Main {
 		Scanner sc = new Scanner(System.in);
 		userUI = new UserUI(sc);
 		accountUI = new AccountUI(sc);
+		beneficiaryUI = new BeneficiaryUI(sc);
 		int choice = 0;
 		
 		do {
