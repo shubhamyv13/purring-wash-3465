@@ -10,6 +10,8 @@ public interface AccountDAO {
 
 	//for user side
 	void addAccount(Account account) throws SomethingWentWrongException;
+	void addAccountFD(Account account) throws SomethingWentWrongException ;
     public List<Account> accountSummary() throws SomethingWentWrongException, NoRecordFoundException;
-	void eStatementSubscription(String accountNumber) throws SomethingWentWrongException, NoRecordFoundException;
+	int eStatementSubscription(String accountNumber) throws SomethingWentWrongException, NoRecordFoundException;
+	int closeAccount(String accountNumber) throws SomethingWentWrongException, NoRecordFoundException;
 }

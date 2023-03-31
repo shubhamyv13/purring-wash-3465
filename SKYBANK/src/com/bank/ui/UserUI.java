@@ -118,4 +118,41 @@ public class UserUI {
 		  }
 	}
 	
+	public void changePassword() {
+		//code to take input new name
+		System.out.print("Enter old password: ");
+		String oldPassword = scanner.next();
+		
+		System.out.print("Enter new password: ");
+		String newPassword = scanner.next();
+		
+		System.out.print("Re-Enter new password: ");
+		String newPasswordAgain = scanner.next();
+		
+		if(newPassword.equals(newPasswordAgain)) {
+			try {
+				userDAO.changePassword(oldPassword, newPassword);
+				System.out.println("Password updated successfully.");
+			}catch(SomethingWentWrongException | NoRecordFoundException ex) {
+				System.err.println(ex);
+			}
+		}else {
+			System.out.println("New password does not match with re-entered password");
+		}
+	}
+	
+	public void deleteUser() {
+	    try {
+	       userDAO.deleteUser();
+	       System.out.println("You account has been deleted successfully.\nYou are Logged out");
+	        	
+	    }catch(SomethingWentWrongException | NoRecordFoundException ex) {
+	        	System.err.println(ex);
+	    }
+	}
+	
+	public void logout() {
+		userDAO.logout();
+	}
+	
 }

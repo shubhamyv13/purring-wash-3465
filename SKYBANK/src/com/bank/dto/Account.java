@@ -15,4 +15,6 @@ public interface Account {
 	public void setAccountNumber(String accountNumber);
 	public String getAccountType();
 	public void setAccountType(String accountType);
+	public int getDuration();
+	public void setDuration(int duration);
 }
