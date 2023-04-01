@@ -1,4 +1,5 @@
 package com.bank.ui;
+import java.io.IOException;
 import java.util.Scanner;
 
 import com.bank.consoleColors.ConsoleColors;
@@ -87,7 +88,7 @@ public class Main {
 		System.out.println();
 		System.out.println(ConsoleColors.BLUE_BOLD
 				+"+===============================================+"+"\n"
-				+"|  Fixed Deposit                                |"+"\n"
+				+"|  e-Services                                   |"+"\n"
 				+"+===============================================+"+"\n"
 				+"|                                               |"+"\n"
 				+"|  1. ATM Card Services                         |"+"\n"
@@ -113,16 +114,16 @@ public class Main {
 				   //paymentsAndTransfer(sc);
 				   break;
 			   case 3:
-				   //fixedDeposit(sc);
+				   userUI.panRegistration();
 				   break;
 			   case 4:
-				   //eservices(sc);
+				   userUI.aadharRegistration();
 				   break;
 			   case 5:
-				   //logout(sc);
+				   accountUI.enableUPI();
 				   break;
 			   case 6:
-				   //logout(sc);
+				   accountUI.disableUPI();
 				   break;	   
 			   case 7:
 				   return;
@@ -146,17 +147,22 @@ public class Main {
 		System.out.println(ConsoleColors.GREEN_BOLD+"*** Please choose Option ***"+ConsoleColors.RESET);
 		System.out.println();
 		System.out.println(ConsoleColors.BLUE_BOLD
-				+"+===============================================+"+"\n"
-				+"|  Fixed Deposit                                |"+"\n"
-				+"+===============================================+"+"\n"
-				+"|                                               |"+"\n"
-				+"|  1. New Fixed Deposit                         |"+"\n"
-				+"|  2. View All FD                               |"+"\n"
-				+"|  3. Recurring FD                              |"+"\n"
-				+"|  4. Partial Closure FD                        |"+"\n"
-				+"|  5. Exit                                      |"+"\n"
-				+"|                                               |"+"\n"
-				+"+===============================================+"+"\n"
+				+"+================================================+"+"\n"
+				+"|  Fixed Deposit                                 |"+"\n"
+				+"+================================================+"+"\n"
+				+"|                                                |"+"\n"
+				+"|  1.  New Fixed Deposit                         |"+"\n"
+				+"|  2.  New Recurring Deposit                     |"+"\n"
+				+"|  3.  View all FD/RD                            |"+"\n"
+				+"|  4.  View all FD                               |"+"\n"
+				+"|  5.  View all RD                               |"+"\n"
+				+"|  6.  View FD using account number              |"+"\n"
+				+"|  7.  View RD using account number              |"+"\n"
+				+"|  8.  Partial Closure FD                        |"+"\n"
+				+"|  9.  Partial Closure RD                        |"+"\n"
+				+"|  10. Exit                                      |"+"\n"
+				+"|                                                |"+"\n"
+				+"+================================================+"+"\n"
 				+ConsoleColors.RESET);
 		
 		System.out.println();
@@ -168,15 +174,30 @@ public class Main {
 				   accountUI.addAccountFD();
 				   break;
 			   case 2:
-				   //paymentsAndTransfer(sc);
+				   accountUI.addAccountRD();
 				   break;
 			   case 3:
-				   //fixedDeposit(sc);
+				   accountUI.viewAccountFDRD();
 				   break;
 			   case 4:
-				   //eservices(sc);
+				   accountUI.viewAccountFD();
 				   break;
 			   case 5:
+				   accountUI.viewAccountRD();
+				   break;
+			   case 6:
+				   accountUI.viewAccountFDAccount();
+				   break;
+			   case 7:
+				   accountUI.viewAccountRDAccount();
+				   break;
+			   case 8:
+				   accountUI.partialCloseFD();
+				   break;
+			   case 9:
+				   accountUI.partialCloseRD();
+				   break;		   
+			   case 10:
 				   return;
 			   default:
 				   System.out.println("Invalid selection, try again.");
@@ -218,7 +239,7 @@ public class Main {
 			choice = sc.nextInt();
 			switch(choice) {
 			   case 1:
-				   //accountUI.addAccountFD();
+				   accountUI.quickTransfer();
 				   break;
 			   case 2:
 				   //paymentsAndTransfer(sc);
@@ -371,6 +392,7 @@ public class Main {
 					//no break statement here i.e. after deletion of user account, logout will also take place
 			   case 7:
 				   userUI.logout();
+				   customerPortal(sc);
 				   break;	   
 			   case 8:
 				   return;

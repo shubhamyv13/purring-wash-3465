@@ -1,43 +1,25 @@
 package com.bank.dto;
 
 public class AccountImpl implements Account{
-
-	private String aadhar;
-	private String pan;
+	
 	private String balance;
-	private String customerId;
 	private String accountNumber;
 	private String accountType;
 	private int duration = 0;
+	private String nomineeName ;
+	private String nomineeRelation;
 	
 	public AccountImpl() {}
 	
-	public AccountImpl(String aadhar, String pan, String balance, String customerId, String accountNumber,
-			String accountType, int duration) {
+	public AccountImpl(String balance, String accountNumber,
+			String accountType, int duration,String nomineeName, String nomineeRelation) {
 		super();
-		this.aadhar = aadhar;
-		this.pan = pan;
 		this.balance = balance;
-		this.customerId = customerId;
 		this.accountNumber = accountNumber;
 		this.accountType = accountType;
 		this.duration = duration;
-	}
-
-	public String getAadhar() {
-		return aadhar;
-	}
-
-	public void setAadhar(String aadhar) {
-		this.aadhar = aadhar;
-	}
-
-	public String getPan() {
-		return pan;
-	}
-
-	public void setPan(String pan) {
-		this.pan = pan;
+		this.nomineeName = nomineeName;
+		this.nomineeRelation = nomineeRelation;
 	}
 
 	public String getBalance() {
@@ -47,15 +29,7 @@ public class AccountImpl implements Account{
 	public void setBalance(String balance) {
 		this.balance = balance;
 	}
-
-	public String getCustomerId() {
-		return customerId;
-	}
-
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
-	}
-
+	
 	public String getAccountNumber() {
 		return accountNumber;
 	}
@@ -80,10 +54,29 @@ public class AccountImpl implements Account{
 		this.duration = duration;
 	}
 
+	public String getNomineeName() {
+		return nomineeName;
+	}
+
+	public void setNomineeName(String nomineeName) {
+		this.nomineeName = nomineeName;
+	}
+
+	public String getNomineeRelation() {
+		return nomineeRelation;
+	}
+
+	public void setNomineeRelation(String nomineeRelation) {
+		this.nomineeRelation = nomineeRelation;
+	}
+
 	@Override
 	public String toString() {
-		return  "AccountNumber= " + accountNumber + ", AccountType= " + accountType + ", Balance= " + balance + "\n";
+		return "AccountNumber= " + accountNumber +  ", AccountType= " + accountType + ", Balance= " + balance
+				+ ", NomineeName= " + nomineeName + ", NomineeRelation= " + nomineeRelation + "\n";
 	}
+
+	
 	
 	
 	

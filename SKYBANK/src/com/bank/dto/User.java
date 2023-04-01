@@ -47,4 +47,12 @@ public interface User {
 	public String getCustomerId();
 
 	public void setCustomerId(String customerId);
+	
+	public String getAadhar();
+
+	public void setAadhar(String aadhar);
+
+	public String getPan();
+
+	public void setPan(String pan);
 }
