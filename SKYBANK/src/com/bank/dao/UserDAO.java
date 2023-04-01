@@ -16,5 +16,7 @@ public interface UserDAO {
 	public void updateUser(User user) throws SomethingWentWrongException;
 	public void changePassword(String oldPassword, String newPassword)throws SomethingWentWrongException, NoRecordFoundException;
 	public void deleteUser() throws SomethingWentWrongException, NoRecordFoundException;
+	void updateUserPan(String pan) throws SomethingWentWrongException;
+	void updateUserAadhar(String aadhar) throws SomethingWentWrongException;
 	
 }

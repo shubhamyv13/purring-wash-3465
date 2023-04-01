@@ -21,12 +21,13 @@ public class UserDAOImpl implements UserDAO {
 			//connect to database
 			connection = DBUtils.connectToDatabase();
 			
-			String SELECT_QUEry = "SELECT id FROM user WHERE customerId = ?";
+			String SELECT_QUEry = "SELECT id FROM user WHERE customerId = ? AND is_delete = ?";
 			
 			//prepare the query
 			PreparedStatement pr = connection.prepareStatement(SELECT_QUEry);
 			
 			pr.setString(1, customerNumber);
+			pr.setInt(2, 0);
 			
 			//execute query
 			ResultSet resultSet = pr.executeQuery();
@@ -121,12 +122,13 @@ public class UserDAOImpl implements UserDAO {
 			//connect to database
 			connection = DBUtils.connectToDatabase();
 			//prepare the query
-			String SELECT_QUERY = "SELECT fname, lname, mobile, email, dateOfBirth, address, securityQuestion,customerId FROM user WHERE id = ?";
+			String SELECT_QUERY = "SELECT fname, lname, mobile, email, dateOfBirth, address, securityQuestion,customerId FROM user WHERE id = ? AND is_delete = ?";
 			
 			//get the prepared statement object
 			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
 			
 			ps.setInt(1, LoggedINUser.loggedInUserId);
+			ps.setInt(2, 0);
 			
 			//execute query
 			ResultSet resultSet = ps.executeQuery();
@@ -203,7 +205,7 @@ public class UserDAOImpl implements UserDAO {
 			//connect to database
 			connection = DBUtils.connectToDatabase();
 			//prepare the query
-			String UPDATE_QUERY = "UPDATE user SET fname =?,lname = ?,mobile = ?,email = ?,dateOfBirth = ?,address = ?,securityQuestion = ? WHERE id = ?";
+			String UPDATE_QUERY = "UPDATE user SET fname =?,lname = ?,mobile = ?,email = ?,dateOfBirth = ?,address = ?,securityQuestion = ? WHERE id = ? AND is_delete = ?";
 			
 			//get the prepared statement object
 			PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
@@ -217,6 +219,7 @@ public class UserDAOImpl implements UserDAO {
 			ps.setString(6, user.getAddress());
 			ps.setString(7, user.getSecurityQuestion());
 			ps.setInt(8, LoggedINUser.loggedInUserId);
+			ps.setInt(9, 0);
 			
 			//execute query
 			ps.executeUpdate();
@@ -241,7 +244,7 @@ public class UserDAOImpl implements UserDAO {
 			//connect to database
 			connection = DBUtils.connectToDatabase();
 			//prepare the query
-			String CHECK_PASSSWORD_QUERY = "SELECT count(*) as count FROM user WHERE  password = ? AND id = ?";
+			String CHECK_PASSSWORD_QUERY = "SELECT count(*) as count FROM user WHERE  password = ? AND id = ? AND is_delete = ?";
 			
 			//get the prepared statement object
 			PreparedStatement ps = connection.prepareStatement(CHECK_PASSSWORD_QUERY);
@@ -249,6 +252,7 @@ public class UserDAOImpl implements UserDAO {
 			//stuff the data in the query
 			ps.setString(1, oldPassword);
 			ps.setInt(2, LoggedINUser.loggedInUserId);
+			ps.setInt(3, 0);
 			
 			//execute query
 			ResultSet resultSet = ps.executeQuery();
@@ -283,7 +287,7 @@ public class UserDAOImpl implements UserDAO {
 			//connect to database
 			connection = DBUtils.connectToDatabase();
 			//prepare the query
-			String UPDATE_QUERY = "UPDATE user SET password = ? WHERE id = ?";
+			String UPDATE_QUERY = "UPDATE user SET password = ? WHERE id = ? AND is_delete = ?";
 			
 			//get the prepared statement object
 			PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
@@ -291,6 +295,7 @@ public class UserDAOImpl implements UserDAO {
 			//stuff the data in the query
 			ps.setString(1, newPassword);
 			ps.setInt(2, LoggedINUser.loggedInUserId);
+			ps.setInt(3, 0);
 			
 			//execute query
 			ps.executeUpdate();
@@ -327,6 +332,72 @@ public class UserDAOImpl implements UserDAO {
 				
 			//execute query
 			ps.executeUpdate();	
+		}catch(SQLException sqlEx) {
+			sqlEx.printStackTrace();
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception 
+				DBUtils.closeConnection(connection);
+			}catch(SQLException sqlEx) {
+				throw new SomethingWentWrongException();
+			}
+		}
+	}
+	
+	@Override
+	public void updateUserPan(String pan) throws SomethingWentWrongException {
+		Connection connection = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String UPDATE_QUERY = "UPDATE user SET pan = ? WHERE id = ? AND is_delete = ?";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
+			
+			//stuff the data in the query
+			ps.setString(1, pan);
+			ps.setInt(2, LoggedINUser.loggedInUserId);
+			ps.setInt(3, 0);
+			
+			//execute query
+			ps.executeUpdate();
+		}catch(SQLException sqlEx) {
+			sqlEx.printStackTrace();
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception 
+				DBUtils.closeConnection(connection);
+			}catch(SQLException sqlEx) {
+				throw new SomethingWentWrongException();
+			}
+		}
+	}
+	
+	@Override
+	public void updateUserAadhar(String aadhar) throws SomethingWentWrongException {
+		Connection connection = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String UPDATE_QUERY = "UPDATE user SET aadhar = ? WHERE id = ? AND is_delete = ?";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
+			
+			//stuff the data in the query
+			ps.setString(1, aadhar);
+			ps.setInt(2, LoggedINUser.loggedInUserId);
+			ps.setInt(3, 0);
+			
+			//execute query
+			ps.executeUpdate();
 		}catch(SQLException sqlEx) {
 			sqlEx.printStackTrace();
 			//code to log the error in the file

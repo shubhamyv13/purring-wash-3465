@@ -46,7 +46,7 @@ public class BeneficiaryUI {
 		}else {
 			//create object for user with all details
 	        
-	        Beneficiary beneficiary = new BeneficiaryImpl(fname,lname, accountNumber, bank,branch, limitOfTransaction, new AccountImpl(null, null,null,null,accountNum,null,0));
+	        Beneficiary beneficiary = new BeneficiaryImpl(fname,lname, accountNumber, bank,branch, limitOfTransaction, new AccountImpl(null,accountNum,null,0,null,null));
 			
 	        try {
 	        	int result = beneficiaryDAO.addBeneficiary(beneficiary);

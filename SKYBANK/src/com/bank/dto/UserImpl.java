@@ -15,12 +15,14 @@ public class UserImpl implements User{
 	private String username;
 	private String password;
 	private String customerId;
+	private String aadhar = "";
+	private String pan = "";
 	
 	public UserImpl() {}
 	
 	public UserImpl(String firstName, String lastName, String mobileNumber, String eMail, String dateOfBirth,
 			String address, String securityQuestion, LocalDate registrationDate, String username, String password,
-			String customerId) {
+			String customerId, String aadhar, String pan) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -33,6 +35,8 @@ public class UserImpl implements User{
 		this.username = username;
 		this.password = password;
 		this.customerId = customerId;
+		this.aadhar = aadhar;
+		this.pan = pan;
 	}
 
 	public String getFirstName() {
@@ -123,14 +127,27 @@ public class UserImpl implements User{
 		this.customerId = customerId;
 	}
 
+	public String getAadhar() {
+		return aadhar;
+	}
+
+	public void setAadhar(String aadhar) {
+		this.aadhar = aadhar;
+	}
+
+	public String getPan() {
+		return pan;
+	}
+
+	public void setPan(String pan) {
+		this.pan = pan;
+	}
+
 	@Override
 	public String toString() {
 		return "FirstName= " + firstName + ", LastName= " + lastName + ", MobileNumber= " + mobileNumber + ", eMail= "
 				+ eMail + ", DateOfBirth= " + dateOfBirth + ", Address= " + address + ", SecurityQuestion= "
 				+ securityQuestion + ", CustomerId= " + customerId + "\n";
 	}
-	
-	
-	
 	
 }

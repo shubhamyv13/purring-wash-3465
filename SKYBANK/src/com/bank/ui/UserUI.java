@@ -49,7 +49,7 @@ public class UserUI {
         
         //create object for user with all details
         
-        User user = new UserImpl(fname,lname, mobile, email,dob, address, city,regDate, username, password,customerId);
+        User user = new UserImpl(fname,lname, mobile, email,dob, address, city,regDate, username, password,customerId,null,null);
 		
         try {
         	userDAO.addUser(user);
@@ -107,7 +107,7 @@ public class UserUI {
 		  		        
 		  //create object for user with all details
 		        
-		  User user = new UserImpl(fname,lname, mobile, email,dob, address, city,null, null, null,null);
+		  User user = new UserImpl(fname,lname, mobile, email,dob, address, city,null, null, null,null,null,null);
 				
 		  try {
 		     	userDAO.updateUser(user);
@@ -153,6 +153,32 @@ public class UserUI {
 	
 	public void logout() {
 		userDAO.logout();
+	}
+	
+	public void panRegistration() {
+		   //code to take input of the new user
+			  System.out.print("Enter pan number: ");
+			  String pan = scanner.next();
+			  try {
+			     	userDAO.updateUserPan(pan);
+			        System.out.println("Pan number updated successfully.");
+			  }catch(SomethingWentWrongException ex) {
+			        System.err.println(ex);
+		
+			  }
+	}
+	
+	public void aadharRegistration() {
+		   //code to take input of the new user
+			  System.out.print("Enter aadhar number: ");
+			  String aadhar = scanner.next();
+			  try {
+			     	userDAO.updateUserAadhar(aadhar);
+			        System.out.println("Aadhar number updated successfully.");
+			  }catch(SomethingWentWrongException ex) {
+			        System.err.println(ex);
+		
+			  }
 	}
 	
 }
