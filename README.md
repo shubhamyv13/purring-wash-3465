@@ -77,7 +77,7 @@ Create a New Database in MySQL: "bank_project"
 
 ## ER Diagram
     
-![Untitled (5)](https://user-images.githubusercontent.com/112808601/229425061-4e6c472d-6629-4eec-a4a2-04f79892d1a7.png)
+![Untitled (5)](https://user-images.githubusercontent.com/112808601/229458438-de80f452-9c63-4074-acfd-076e03081153.png)
 
 <br>
 
