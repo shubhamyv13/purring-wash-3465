@@ -25,9 +25,49 @@
 <h4>Customer<h4>
 <ol>
     <li>My Account & Profile</li>
+      <ul>
+        <li>View Profile</li>
+        <li>Update Profile</li>
+        <li>Account Summary </li>
+        <li>Register for e-statement</li>
+        <li>Transaction History</li>
+        <li>Change Password</li>
+        <li>Add Beneficiary  </li>
+        <li>Delete Beneficiary (particular account)</li>
+        <li>View Beneficiary (particular account)</li>
+      </ul>
+      <br>
     <li>Payments & Transfers</li>
-    <li>Fixed Deposit</li>
+      <ul>
+        <li>Quick Transfer(Without Adding Beneficiary)</li>
+        <li>Transfer (To Added Beneficiary)</li>
+        <li>Deposit Money </li>
+        <li>Add Beneficiary</li>
+        <li>Delete Beneficiary (Particular Account)</li>
+      </ul>
+      <br>
+    <li>FD/RD/Saving</li>
+      <ul>
+        <li>New Fixed Deposit Account </li>
+        <li>New Recurring Deposit Account</li>
+        <li>New Saving Account</li>
+        <li>View all FD/RD</li>
+        <li>View all FD</li>
+        <li>View all RD </li>
+        <li>View RD using account number</li>
+        <li>View FD using account number</li>
+        <li>Partial Closure FD</li>
+        <li>Partial Closure RD</li>
+      </ul>
+      <br>
     <li>e-services </li>
+     <ul>
+        <li>Pan Registration</li>
+        <li>Aadhar Registration</li>
+        <li>Enable Account for UPI</li>
+        <li>Disable Account for UPI</li>
+      </ul>
+      <br>
     <li>Close Account </li>
     <li>Delete Account</li>
     <li>Logout</li>
