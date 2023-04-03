@@ -53,6 +53,45 @@ public class UserDAOImpl implements UserDAO {
 		
 		return checkResult;
 	}
+	
+	public static int getAnyCustomerId(String customerNumber) throws SomethingWentWrongException,NoRecordFoundException{
+		Connection connection = null;
+		int checkResult = 0;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			
+			String SELECT_QUEry = "SELECT id FROM user WHERE customerId = ?";
+			
+			//prepare the query
+			PreparedStatement pr = connection.prepareStatement(SELECT_QUEry);
+			
+			pr.setString(1, customerNumber);
+			
+			//execute query
+			ResultSet resultSet = pr.executeQuery();
+			if(DBUtils.isResultSetEmpty(resultSet)) {
+				throw new NoRecordFoundException("No such customer Id found");
+			}
+			
+			//Data extraction from the result set
+			resultSet.next();
+			checkResult = resultSet.getInt(1);
+		}catch(SQLException sqlEx) {
+			sqlEx.printStackTrace();
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception 
+				DBUtils.closeConnection(connection);
+			}catch(SQLException sqlEx) {
+				throw new SomethingWentWrongException();
+			}
+		}
+		
+		return checkResult;
+	}
 
 	@Override
 	public void addUser(User user) throws SomethingWentWrongException {
@@ -410,6 +449,84 @@ public class UserDAOImpl implements UserDAO {
 				throw new SomethingWentWrongException();
 			}
 		}
+	}
+	
+	
+	//Accountant methods start here --
+	
+	public List<User> viewAllCustomers() throws SomethingWentWrongException, NoRecordFoundException{
+		Connection connection = null;
+		List<User> list = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String SELECT_QUERY = "SELECT fname, lname, mobile, email, dateOfBirth, address, securityQuestion,customerId FROM user";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
+			
+			//execute query
+			ResultSet resultSet = ps.executeQuery();
+			
+			//check if result set is empty
+			if(DBUtils.isResultSetEmpty(resultSet)) {
+				throw new NoRecordFoundException("No user Found");
+			}
+			
+			list = viewProfileFromResultSet(resultSet);
+		}catch(SQLException sqlEx) {
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				throw new SomethingWentWrongException();
+			}
+		}
+		return list;
+	}
+	
+	public List<User> viewParticularCustomer(String customerNumber) throws SomethingWentWrongException, NoRecordFoundException{
+		Connection connection = null;
+		List<User> list = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			
+			int customerId = getAnyCustomerId(customerNumber);
+			
+			//prepare the query
+			String SELECT_QUERY = "SELECT fname, lname, mobile, email, dateOfBirth, address, securityQuestion,customerId FROM user WHERE id = ?";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
+			
+			ps.setInt(1, customerId);
+			
+			//execute query
+			ResultSet resultSet = ps.executeQuery();
+			
+			//check if result set is empty
+			if(DBUtils.isResultSetEmpty(resultSet)) {
+				throw new NoRecordFoundException("No user Found");
+			}
+			
+			list = viewProfileFromResultSet(resultSet);
+		}catch(SQLException sqlEx) {
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				throw new SomethingWentWrongException();
+			}
+		}
+		return list;
 	}
 
 }

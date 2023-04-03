@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.bank.dto.Account;
@@ -52,7 +54,7 @@ public class AccountDAOImpl implements AccountDAO{
 //		return customerId;
 //	}
 	
-	public static Account getAccount(String accountNumber) throws SomethingWentWrongException, NoRecordFoundException {
+	public Account getAccount(String accountNumber) throws SomethingWentWrongException, NoRecordFoundException {
 		Connection connection = null;
 		Account account = null;
 		try {
@@ -100,7 +102,7 @@ public class AccountDAOImpl implements AccountDAO{
 	}
 	
 	
-	public static int getAccountId(String accountNumber) throws SomethingWentWrongException,NoRecordFoundException{
+	public int getAccountId(String accountNumber) throws SomethingWentWrongException,NoRecordFoundException{
 		Connection connection = null;
 		int checkResult = 0;
 		try {
@@ -141,14 +143,16 @@ public class AccountDAOImpl implements AccountDAO{
 	}
 
 	@Override
-	public void addAccount(Account account) throws SomethingWentWrongException {
+	public void addAccount(Account account, String customerNumber) throws SomethingWentWrongException, NoRecordFoundException {
 		Connection connection = null;
 		try {
 			//connect to database
 			connection = DBUtils.connectToDatabase();
 			
+			int id = UserDAOImpl.getCustomerId(customerNumber);
+			
 			//prepare the query
-			String INSERT_QUERY = "INSERT INTO account (accountNumber,availableBalance,accountType,nomineeName, nomineeRelation,customer_Id) VALUES (?,?,?,?,?,?,?,?)";
+			String INSERT_QUERY = "INSERT INTO account (accountNumber,availableBalance,accountType,nomineeName, nomineeRelation,customer_Id,duration) VALUES (?,?,?,?,?,?,?)";
 			
 			//get the prepared statement object
 			PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
@@ -156,14 +160,15 @@ public class AccountDAOImpl implements AccountDAO{
 			//stuff the data in the query
 			ps.setString(1, account.getAccountNumber());
 			ps.setString(2, account.getBalance());
-			ps.setString(5, account.getAccountType());
-			ps.setString(6, account.getNomineeName());
-			ps.setString(7, account.getNomineeRelation());
-			ps.setInt(8, LoggedINUser.loggedInUserId);
+			ps.setString(3, account.getAccountType());
+			ps.setString(4, account.getNomineeName());
+			ps.setString(5, account.getNomineeRelation());
+			ps.setInt(6, id);
+			ps.setInt(7, 0);
 				
 			//execute query
 			ps.executeUpdate();
-		}catch(SQLException ex) {
+		}catch(SQLException | NoRecordFoundException ex) {
 			ex.printStackTrace();
 			//code to log the error in the file
 			throw new SomethingWentWrongException();
@@ -210,7 +215,7 @@ public class AccountDAOImpl implements AccountDAO{
 			//connect to database
 			connection = DBUtils.connectToDatabase();
 			//prepare the query
-			String SELECT_QUERY = "SELECT accountNumber, availableBalance, accountType, nomineeName, nomineeRelaion FROM account WHERE customer_Id = ? AND is_delete=?";
+			String SELECT_QUERY = "SELECT accountNumber, availableBalance, accountType, nomineeName, nomineeRelation FROM account WHERE customer_Id = ? AND is_delete=?";
 			
 			//get the prepared statement object
 			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
@@ -471,7 +476,7 @@ public class AccountDAOImpl implements AccountDAO{
 			connection = DBUtils.connectToDatabase();
 			
 			//prepare the query
-			String INSERT_QUERY = "INSERT INTO account (accountNumber,availableBalance,accountType,nomineeName, nomineeRelation,customer_Id) VALUES (?,?,?,?,?,?,?,?)";
+			String INSERT_QUERY = "INSERT INTO account (accountNumber,availableBalance,accountType,nomineeName, nomineeRelation,customer_Id) VALUES (?,?,?,?,?,?)";
 			
 			//get the prepared statement object
 			PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
@@ -479,10 +484,10 @@ public class AccountDAOImpl implements AccountDAO{
 			//stuff the data in the query
 			ps.setString(1, account.getAccountNumber());
 			ps.setString(2, account.getBalance());
-			ps.setString(5, account.getAccountType());
-			ps.setString(6, account.getNomineeName());
-			ps.setString(7, account.getNomineeRelation());
-			ps.setInt(8, LoggedINUser.loggedInUserId);
+			ps.setString(3, account.getAccountType());
+			ps.setString(4, account.getNomineeName());
+			ps.setString(5, account.getNomineeRelation());
+			ps.setInt(6, LoggedINUser.loggedInUserId);
 				
 			//execute query
 			ps.executeUpdate();
@@ -725,7 +730,7 @@ public class AccountDAOImpl implements AccountDAO{
 			connection = DBUtils.connectToDatabase();
 			
 			//getting the accountId to which the payee account is connected to check if the entered account number is a valid one
-			int accountId = AccountDAOImpl.getAccountId(fdAccountNumber);
+			int accountId = getAccountId(fdAccountNumber);
 			
 			//call here the method getBalance and deposit method to given account number from fd account
 			
@@ -775,7 +780,7 @@ public class AccountDAOImpl implements AccountDAO{
 			connection = DBUtils.connectToDatabase();
 			
 			//getting the accountId to which the payee account is connected to check if the entered account number is a valid one
-			int accountId = AccountDAOImpl.getAccountId(rdAccountNumber);
+			int accountId = getAccountId(rdAccountNumber);
 			
 			//call here the method getBalance and deposit method to given account number from fd account
 			
@@ -817,9 +822,8 @@ public class AccountDAOImpl implements AccountDAO{
 	}
 	
 	@Override
-	public int updateAccountBalance(String accountNumber, int amount) throws SomethingWentWrongException, NoRecordFoundException, UserRelatedException {
+	public void updateAccountBalance(String accountNumber, int amount) throws SomethingWentWrongException, NoRecordFoundException, UserRelatedException {
 		Connection connection = null;
-		int result = 0;
 		try {
 			//connect to database
 			connection = DBUtils.connectToDatabase();
@@ -839,7 +843,7 @@ public class AccountDAOImpl implements AccountDAO{
 			ps.setInt(4, 0);
 				
 			//execute query
-			result = ps.executeUpdate();
+			ps.executeUpdate();
 			
 		}catch(SQLException sqlEx) {
 			sqlEx.printStackTrace();
@@ -853,6 +857,236 @@ public class AccountDAOImpl implements AccountDAO{
 				throw new SomethingWentWrongException();
 			}
 		}
-		return result;
+	}
+	
+	@Override
+	public List<Account> viewAllAccounts() throws SomethingWentWrongException, NoRecordFoundException {
+		Connection connection = null;
+		List<Account> list = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String SELECT_QUERY = "SELECT accountNumber, availableBalance, accountType, nomineeName, nomineeRelation FROM account";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
+			
+			//execute query
+			ResultSet resultSet = ps.executeQuery();
+			
+			//check if result set is empty
+			if(DBUtils.isResultSetEmpty(resultSet)) {
+				throw new NoRecordFoundException("No account Found");
+			}
+			
+			list = viewAccountResultSet(resultSet);
+		}catch(SQLException sqlEx) {
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				throw new SomethingWentWrongException();
+			}
+		}
+		return list;
+	}
+	
+	@Override
+	public List<Account> viewAllClosedAccounts() throws SomethingWentWrongException, NoRecordFoundException {
+		Connection connection = null;
+		List<Account> list = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String SELECT_QUERY = "SELECT accountNumber, availableBalance, accountType, nomineeName, nomineeRelation FROM account WHERE is_delete = ?";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
+			
+			ps.setInt(1, 1);
+			
+			//execute query
+			ResultSet resultSet = ps.executeQuery();
+			
+			//check if result set is empty
+			if(DBUtils.isResultSetEmpty(resultSet)) {
+				throw new NoRecordFoundException("No account Found");
+			}
+			
+			list = viewAccountResultSet(resultSet);
+		}catch(SQLException sqlEx) {
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				throw new SomethingWentWrongException();
+			}
+		}
+		return list;
+	}
+	
+	private Account getAccountForInoperative(String accountNumber) throws SomethingWentWrongException, NoRecordFoundException {
+		Connection connection = null;
+		Account account = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String SELECT_QUERY = "SELECT accountNumber, availableBalance, accountType, nomineeName, nomineeRelation FROM account WHERE accountNumber = ? ";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
+			
+			ps.setString(1, accountNumber);			
+			//execute query
+			ResultSet resultSet = ps.executeQuery();
+			
+			//check if result set is empty
+			if(DBUtils.isResultSetEmpty(resultSet)) {
+				throw new NoRecordFoundException("No suc account found linked to your customerId.");
+			}
+			resultSet.next();
+			
+			account = new AccountImpl();
+			account.setAccountNumber(resultSet.getString("accountNumber"));
+			account.setBalance(resultSet.getString("availableBalance"));
+			account.setAccountType(resultSet.getString("accountType"));
+			account.setNomineeName(resultSet.getString("nomineeName"));
+			account.setNomineeRelation(resultSet.getString("nomineeRelation"));
+			
+			
+		}catch(SQLException sqlEx) {
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				throw new SomethingWentWrongException();
+			}
+		}
+		return account;
+	}
+	
+	@Override
+	public List<Account> viewAllInoperativeAccounts() throws SomethingWentWrongException, NoRecordFoundException {
+		Connection connection = null;
+		List<Account> list = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String SELECT_QUERY = "SELECT accountNumber FROM transaction t INNER JOIN account a on t.account_id = a.id GROUP BY accountNumber HAVING MAX(TIMESTAMP(timeOfTransaction)) < ?";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
+			
+			Date currentDate = new Date();
+	        long milliseconds = (long) 2*365 * 24 * 60 * 60 * 1000;
+	        Date twoYearBefore = new Date(currentDate.getTime() - milliseconds);
+	     
+			ps.setDate(1,new java.sql.Date(twoYearBefore.getTime()));
+			
+			//execute query
+			ResultSet resultSet = ps.executeQuery();
+			
+			//check if result set is empty
+			if(DBUtils.isResultSetEmpty(resultSet)) {
+				throw new NoRecordFoundException("No account Found");
+			}
+			
+			list = new ArrayList<>();
+			while(resultSet.next()) {
+				list.add(getAccountForInoperative(resultSet.getString("accountNumber")));
+			}
+		}catch(SQLException sqlEx) {
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				throw new SomethingWentWrongException();
+			}
+		}
+		return list;
+	}
+	
+	@Override
+	public List<Account> viewParticularAccount(String accountNumber) throws SomethingWentWrongException, NoRecordFoundException {
+		Connection connection = null;
+		List<Account> list = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String SELECT_QUERY = "SELECT accountNumber, availableBalance, accountType, nomineeName, nomineeRelation FROM account WHERE accountNumber = ?";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
+			
+			ps.setString(1, accountNumber);
+			
+			//execute query
+			ResultSet resultSet = ps.executeQuery();
+			
+			//check if result set is empty
+			if(DBUtils.isResultSetEmpty(resultSet)) {
+				throw new NoRecordFoundException("No account Found");
+			}
+			
+			list = viewAccountResultSet(resultSet);
+		}catch(SQLException sqlEx) {
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				throw new SomethingWentWrongException();
+			}
+		}
+		return list;
+	}
+	@Override
+	public void makeAccountInoperative(String accountNumber) throws SomethingWentWrongException, NoRecordFoundException {
+		Connection connection = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+
+			String UPDATE_QUERY = "UPDATE account SET is_inoperative = ? WHERE accountNumber = ?";
+					
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
+					
+			ps.setInt(1, 1);
+			ps.setString(2, accountNumber);
+			
+			//execute query
+			ps.executeUpdate();
+		}catch(SQLException sqlEx) {
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				throw new SomethingWentWrongException();
+			}
+		}
 	}
 }

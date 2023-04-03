@@ -181,4 +181,28 @@ public class UserUI {
 			  }
 	}
 	
+	//Accountant methods start here
+	
+	public void viewAllCustomers() {
+		try {
+			List<User> listUserData = userDAO.viewAllCustomers();
+			listUserData.forEach(System.out::println);
+		}catch(SomethingWentWrongException | NoRecordFoundException ex) {
+			System.out.println(ex);
+		}
+	}
+	
+	public void viewParticularCustomer() {
+		
+		System.out.print("Enter the customer Number: ");
+		String customerNumber = scanner.next();
+		
+		try {
+			List<User> listUserData = userDAO.viewParticularCustomer(customerNumber);
+			listUserData.forEach(System.out::println);
+		}catch(SomethingWentWrongException | NoRecordFoundException ex) {
+			System.out.println(ex);
+		}
+	}
+	
 }

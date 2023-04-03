@@ -17,15 +17,75 @@ import com.bank.exception.SomethingWentWrongException;
 
 public class BeneficiaryDAOImpl implements BeneficiaryDAO{
 	
+	public static AccountDAO accountDAO;
+	
+	public BeneficiaryDAOImpl() {
+		this.accountDAO = new AccountDAOImpl();
+	}
+	
 	//a helper function to get the beneficiaryId
-	private int getBeneficiaryId(String beneficiaryAccountNumber, String payeeAccountNumber) throws NoRecordFoundException, SomethingWentWrongException {
+	
+	public  Beneficiary getBeneficiary(String beneficiaryAccountNumber, String payeeAccountNumber) throws NoRecordFoundException, SomethingWentWrongException {
+		Connection connection = null;
+		Beneficiary beneficiary = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			
+			int account_id = accountDAO.getAccountId(payeeAccountNumber);
+			
+			//prepare the query
+			String SELECT_QUERY = "SELECT fname, lname, accountNum, bank, branch, limitOfTransaction FROM beneficiary b INNER JOIN account a ON b.acc_Id = a.id WHERE b.acc_Id = ? AND a.customer_Id = ? AND b.is_delete = ? AND b.accountNum = ?";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
+			
+			ps.setInt(1, account_id);
+			ps.setInt(2, LoggedINUser.loggedInUserId);
+			ps.setInt(3, 0);
+			ps.setString(4, beneficiaryAccountNumber);
+			
+			//execute query
+			ResultSet resultSet = ps.executeQuery();
+			
+			//check if result set is empty
+			if(DBUtils.isResultSetEmpty(resultSet)) {
+				throw new NoRecordFoundException("There is no beneficiary account found linked to provided account.");
+			}
+			
+			resultSet.next();
+			
+			beneficiary = new BeneficiaryImpl();
+			 
+			beneficiary.setFisrtName(resultSet.getString("fname"));
+			beneficiary.setLastName(resultSet.getString("lname"));
+			beneficiary.setAccountNumber(resultSet.getString("accountNum"));
+			beneficiary.setBank(resultSet.getString("bank"));
+			beneficiary.setBranch(resultSet.getString("branch"));;
+			beneficiary.setLimitOfTransaction(resultSet.getString("limitOfTransaction"));
+			
+		}catch(SQLException sqlEx) {
+			//code to log the error in the file
+			throw new SomethingWentWrongException();
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				throw new SomethingWentWrongException();
+			}
+		}
+		return beneficiary;
+	}
+	
+	public int getBeneficiaryId(String beneficiaryAccountNumber, String payeeAccountNumber) throws NoRecordFoundException, SomethingWentWrongException {
 		Connection connection = null;
 		int result = 0;
         try {
         	//connect to database
 			connection = DBUtils.connectToDatabase();
 			//getting the account_Id for the given payee account number
-			int acc_Id = AccountDAOImpl.getAccountId(payeeAccountNumber);
+			int acc_Id = accountDAO.getAccountId(payeeAccountNumber);
 			
 			//prepare the query
 			String INSERT_QUERY = "SELECT id FROM beneficiary WHERE accountNum = ? AND acc_Id = ? AND is_delete = ?";
@@ -73,10 +133,10 @@ public class BeneficiaryDAOImpl implements BeneficiaryDAO{
 			int beneficiaryId = getBeneficiaryId(beneficiary.getAccountNumber(),beneficiary.getAccount().getAccountNumber());
 			
 			//getting the payee account type (as FD account cannot have beneficiaries)
-			String payeeAccountType = AccountDAOImpl.getAccount(beneficiary.getAccount().getAccountNumber()).getAccountType();
+			String payeeAccountType = accountDAO.getAccount(beneficiary.getAccount().getAccountNumber()).getAccountType();
 			
 			//getting the accountId to which the payee account is connected to check if the entered account number is a valid one
-			int accountId = AccountDAOImpl.getAccountId(beneficiary.getAccount().getAccountNumber());
+			int accountId = accountDAO.getAccountId(beneficiary.getAccount().getAccountNumber());
 			System.out.println(accountId);
 			
 			if(payeeAccountType.equals("Fixed_Deposit")) {
@@ -92,7 +152,7 @@ public class BeneficiaryDAOImpl implements BeneficiaryDAO{
 				return result;
 			}	
 			else {
-				int id = AccountDAOImpl.getAccountId(beneficiary.getAccount().getAccountNumber());
+				int id = accountDAO.getAccountId(beneficiary.getAccount().getAccountNumber());
 				
 				//prepare the query
 				String INSERT_QUERY = "INSERT INTO beneficiary (fname,lname,accountNum,bank,branch,limitOfTransaction,acc_Id) VALUES (?,?,?,?,?,?,?)";
@@ -141,10 +201,10 @@ public class BeneficiaryDAOImpl implements BeneficiaryDAO{
 			int beneficiaryId = getBeneficiaryId(beneficiaryAccountNumber,payeeAccountNumber);
 			
 			//getting the payee account type (as FD account cannot have beneficiaries)
-			String payeeAccountType = AccountDAOImpl.getAccount(payeeAccountNumber).getAccountType();
+			String payeeAccountType = accountDAO.getAccount(payeeAccountNumber).getAccountType();
 			
 			//getting the accountId to which the payee account is connected to check if the entered account number is a valid one
-			int accountId = AccountDAOImpl.getAccountId(payeeAccountNumber);
+			int accountId = accountDAO.getAccountId(payeeAccountNumber);
 			
 			if(payeeAccountType.equals("Fixed_Deposit")) {
 				result = -1;
@@ -159,7 +219,7 @@ public class BeneficiaryDAOImpl implements BeneficiaryDAO{
 				return result;
 			}	
 			else {
-				int id = AccountDAOImpl.getAccountId(payeeAccountNumber);
+				int id = accountDAO.getAccountId(payeeAccountNumber);
 				
 				//prepare the query
 				String UPDATE_QUERY = "UPDATE beneficiary SET is_delete = ? WHERE accountNum= ? AND acc_Id = ?";
@@ -218,7 +278,7 @@ public class BeneficiaryDAOImpl implements BeneficiaryDAO{
 			//connect to database
 			connection = DBUtils.connectToDatabase();
 			
-			int account_id = AccountDAOImpl.getAccountId(payeeAccountNumber);
+			int account_id = accountDAO.getAccountId(payeeAccountNumber);
 			
 			//prepare the query
 			String SELECT_QUERY = "SELECT fname, lname, accountNum, bank, branch, limitOfTransaction FROM beneficiary b INNER JOIN account a ON b.acc_Id = a.id WHERE b.acc_Id = ? AND a.customer_Id = ? AND b.is_delete = ?";

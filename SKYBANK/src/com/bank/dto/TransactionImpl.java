@@ -84,8 +84,8 @@ public class TransactionImpl implements Transaction{
 
 	@Override
 	public String toString() {
-		return  "Remark= " + remark + ", TransactionAmount= " + transactionAmount + ", TransactionType= " + transactionType
-				+ ", TimeOfTransaction= " + timeOfTransaction + ", Balance= "+ balance +"\n";
+		return  "TimeOfTransaction= " + timeOfTransaction.toLocalDate() + ", Remark= " + remark + ", TransactionAmount= " + transactionAmount + ", TransactionType= " + transactionType
+				+  ", Balance= "+ balance +"\n";
 	}
 	
 	

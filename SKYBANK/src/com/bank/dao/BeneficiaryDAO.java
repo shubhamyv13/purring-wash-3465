@@ -14,4 +14,6 @@ public interface BeneficiaryDAO {
 			throws SomethingWentWrongException, NoRecordFoundException;
 
 	List<Beneficiary> viewBeneficiary(String payeeAccountNumber)  throws SomethingWentWrongException, NoRecordFoundException;
+	Beneficiary getBeneficiary(String beneficiaryAccountNumber, String payeeAccountNumber) throws NoRecordFoundException, SomethingWentWrongException;
+	int getBeneficiaryId(String beneficiaryAccountNumber, String payeeAccountNumber) throws NoRecordFoundException, SomethingWentWrongException;
 }

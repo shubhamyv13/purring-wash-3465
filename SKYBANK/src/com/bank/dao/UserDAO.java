@@ -19,4 +19,10 @@ public interface UserDAO {
 	void updateUserPan(String pan) throws SomethingWentWrongException;
 	void updateUserAadhar(String aadhar) throws SomethingWentWrongException;
 	
+	
+	//for accountant side
+	
+	public List<User> viewAllCustomers() throws SomethingWentWrongException, NoRecordFoundException;
+	public List<User> viewParticularCustomer(String customerNumber) throws SomethingWentWrongException, NoRecordFoundException;
+	
 }
