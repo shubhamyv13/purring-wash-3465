@@ -20,7 +20,6 @@
     <li>View all closed accounts</li>
     <li>Transaction report for a day</li>
     <li>High magnitude transaction data </li>
-    <li>Logout</li>
 </ol>
 <h4>Customer<h4>
 <ol>
@@ -68,8 +67,8 @@
         <li>Disable Account for UPI</li>
       </ul>
       <br>
-    <li>Close Account </li>
-    <li>Delete Account</li>
+    <li>Close Particular Account(Saving,FD,RD)</li>
+    <li>Delete User Account</li>
     <li>Logout</li>
     <li>Exit</li>
 
