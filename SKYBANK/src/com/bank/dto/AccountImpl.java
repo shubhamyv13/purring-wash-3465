@@ -69,6 +69,8 @@ public class AccountImpl implements Account{
 	public void setNomineeRelation(String nomineeRelation) {
 		this.nomineeRelation = nomineeRelation;
 	}
+	
+	
 
 	@Override
 	public String toString() {
